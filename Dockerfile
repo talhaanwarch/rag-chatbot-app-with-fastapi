@@ -4,12 +4,6 @@ WORKDIR /code
 
 COPY . /code
 
-RUN mkdir -p /code/data
-
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
-
-ENV OPENAI_API_KEY ""
-
+RUN pip install  --upgrade -r /code/requirements.txt --no-cache-dir
 WORKDIR /code/app
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,90 +1,52 @@
-# fastapi-app-with-langchain
+# FastAPI App for RAG
 
-This project is purposed to create RAG(retriever-augmented-generation) chatbot application using fastapi and docker.
+This project is designed to build a Retriever-Augmented-Generation (RAG) chatbot application using FastAPI and Docker. The chatbot can perform Q&A based on uploaded `.pdf` or `.docx` files.
 
-If you upload `.pdf` file, RAG chatbot performs Q&A based on your document.
+This project is a forked and inspired from [this repository](https://github.com/jodog0412/rag-chatbot-app-with-fastapi).
 
-This project heavily referenced `@AshishSinha5`’s [rag_api](https://github.com/AshishSinha5/rag_api/tree/main) project.
+![Project Image](https://github.com/user-attachments/assets/e502f8cb-a38f-463d-b918-3a445f3851f8)
 
-<img src="https://github.com/user-attachments/assets/e502f8cb-a38f-463d-b918-3a445f3851f8" width=800 height=450>
-
-## Table of Content
+## Table of Contents
 
 - Getting Started
 - Usage
-  - Starting the local server
-  - Deploying the server
+- Features/Updates
 
 ## Getting Started
 
-1. Clone this repository to your local machine.
+1. Clone this repository to your local machine:
 
-   ```powershell
-   git clone https://github.com/jodog0412/langchain-app-with-fastapi.git
+   ```sh
+   git clone https://github.com/talhaanwarch/rag-chatbot-app-with-fastapi.git
    cd langchain-app-with-fastapi
    ```
-2. Create a virtual environment in your local directory and activate it.
 
-   ```powershell
-   python -m venv .venv
-   .venv/bin/activate.bat
-   ```
-3. Install Python packages in your virtual environment.
+2. Set the required credentials in the `.env` file located in the `main` directory at the same level as the `app` directory. These providers offer free tiers:
 
-   ```
-   pip install -r requirements.txt
-   ```
-4. Set `OPEN_AI_API_KEY` on `.env` file in the `app` directory.
-
-   ```
+   ```sh
    # app/.env
-   OPENAI_API_KEY =
+   GROQ_API_KEY=
+   COHERE_API_KEY=
+   MILVUS_URI=
+   MILVUS_TOKEN=
    ```
 
-# Usage
+## Usage
 
-## Starting the local server
+### Running the Docker Compose File
 
-```powershell
-cd app
-uvicorn main:app --reload
+To start the local server using Docker Compose, run:
+
+```sh
+docker-compose up -d
 ```
 
-## Deploying the server
+## Features/Updates
 
-1. Set `OPEN_AI_API_KEY` on `Dockerfile`.
-
-   ```Docker
-   FROM python:3.10
-
-   WORKDIR /code
-
-   COPY . /code
-
-   RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
-
-   ENV OPENAI_API_KEY "ENTER YOUR OPENAI API KEY"
-
-   WORKDIR /code/app
-
-   CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-   ```
-2. Build docker-image.
-
-   ```powershell
-   docker build --pull --rm -f "Dockerfile" -t langchainappwithfastapi:latest "." 
-   ```
-3. Create docker-container.
-
-   ```powershell
-   docker run -d --name container -p 8000:8000 langchainappwithfastapi
-   ```
-
-# Features/Update
-
-- [X] build history-aware RAG chatbot
-- [X] implement client-server RESTful-API
-- [X] implement websocket connection
-- [X] deploy the app
-- [ ] bug fixes(deployed app has some errors)
-- [ ] support local LLM(only supports `GPT` model in current version)
+- [x] Build a history-aware RAG chatbot with minimal dependencies on LangChain.
+- [x] Implement a client-server RESTful API.
+- [x] Implement WebSocket connections.
+- [x] Switch from Chroma to Milvus/Zilliz free tier.
+- [x] Use GROQ Llama and Cohere embeddings, as both are free.
+- [x] Create a Docker Compose file to run the application in a containerized environment.
+- [ ] Test the application on the cloud.

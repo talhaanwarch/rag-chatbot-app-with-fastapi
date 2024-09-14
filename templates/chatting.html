@@ -2,14 +2,10 @@
 <html>
     <head>
         <title>Chat With RAG chatbot</title>
-        <link rel="stylesheet" href="{{ url_for('static', path='/chatting.css') }}" />
+        <link rel="stylesheet" href="/static/chatting.css" />
     </head>
     <body>
         <h1>Chat With RAG chatbot</h1>
-        {% if message %}
-            <div class="message">{{ message }}</div>
-            <br></br>
-        {% endif %}
         <form action="" onsubmit="sendMessage(event)">
             <input type="text" id="messageText" autocomplete="off"/>
             <button>Send</button>
@@ -17,19 +13,30 @@
         <ul id='messages'>
         </ul>
         <script>
-            var ws = new WebSocket("ws://localhost:8000/chatting");
+            var ws = new WebSocket("ws://localhost:8001/");
             ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
+                var messages = document.getElementById('messages');
+                var message = document.createElement('li');
+                message.className = 'assistant';
+                var content = document.createTextNode("Assistant: " + event.data);
+                message.appendChild(content);
+                messages.appendChild(message);
             };
             function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
-                input.value = ''
-                event.preventDefault()
+                var input = document.getElementById("messageText");
+                var messages = document.getElementById('messages');
+                
+                // Display user message
+                var userMessage = document.createElement('li');
+                userMessage.className = 'user';
+                var userContent = document.createTextNode("User: " + input.value);
+                userMessage.appendChild(userContent);
+                messages.appendChild(userMessage);
+
+                // Send user message to the server
+                ws.send(input.value);
+                input.value = '';
+                event.preventDefault();
             }
         </script>
     </body>
