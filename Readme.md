@@ -22,6 +22,9 @@ This project is a forked and inspired from [this repository](https://github.com/
    ```
 
 2. Set the required credentials in the `.env` file located in the `main` directory at the same level as the `app` directory. These providers offer free tiers:
+- [Groq](https://groq.com/): For LLM
+- [Cohere](https://cohere.com/): For Embeddings.
+- [Milvus](https://zilliz.io/): For Vector Database.
 
    ```sh
    # app/.env
@@ -32,7 +35,8 @@ This project is a forked and inspired from [this repository](https://github.com/
    ```
 
 ## Usage
-
+### Prompt
+Make sure to modify the prompt in `app/prompt.txt` according to your needs.
 ### Running the Docker Compose File
 
 To start the local server using Docker Compose, run:
