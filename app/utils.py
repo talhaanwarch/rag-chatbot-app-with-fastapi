@@ -25,8 +25,10 @@ def load_split_file(file_path: Annotated[any, "file format should be .pdf"]):
 
 def call_openai(client, messages):
     response = client.chat.completions.create(
-        model="llama3-groq-70b-8192-tool-use-preview",
+        model="llama-3.3-70b-versatile",
         temperature=0.5,
         messages=messages,
+        stream=True,
     )
-    return response.choices[0].message.content
+    for chunk in response:
+        yield chunk.choices[0].delta.content or ""

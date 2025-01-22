@@ -14,14 +14,25 @@
         </ul>
         <script>
             var ws = new WebSocket("ws://localhost:8001/");
+            var currentMessage = null;
+
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages');
-                var message = document.createElement('li');
-                message.className = 'assistant';
-                var content = document.createTextNode("Assistant: " + event.data);
-                message.appendChild(content);
-                messages.appendChild(message);
+                
+                // If there's no current message, create a new one with the "Assistant:" prefix
+                if (!currentMessage) {
+                    currentMessage = document.createElement('li');
+                    currentMessage.className = 'assistant';
+                    var prefix = document.createTextNode("Assistant: ");
+                    currentMessage.appendChild(prefix);
+                    messages.appendChild(currentMessage);
+                }
+
+                // Append the chunk to the current message
+                var content = document.createTextNode(event.data);
+                currentMessage.appendChild(content);
             };
+
             function sendMessage(event) {
                 var input = document.getElementById("messageText");
                 var messages = document.getElementById('messages');
@@ -37,6 +48,9 @@
                 ws.send(input.value);
                 input.value = '';
                 event.preventDefault();
+
+                // Reset the current message
+                currentMessage = null;
             }
         </script>
     </body>

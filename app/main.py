@@ -16,8 +16,7 @@ from langchain_cohere import CohereEmbeddings
 from langchain_milvus import Milvus
 from utils import load_split_file, call_openai
 from dotenv import load_dotenv
-import os
-
+import os,asyncio
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -89,29 +88,52 @@ vector_store_loaded = Milvus(
     collection_name="langchain_example",
 )
 
-
+"""
+Step1: extract year
+Step2: Rewrite Query
+Step3: Vector store
+Step4: LLM call
+Step5: Rerank
+"""
 @app.websocket("/")
 async def websocket_chat(websocket: WebSocket):
     await websocket.accept()
-    user_messages = []
+    chat_history = []  # List to store the chat history
     try:
         while True:
+            # Receive user input
             user_input = await websocket.receive_text()
-            results = vector_store_loaded.similarity_search(
-                user_input,
-                k=5,
-            )
+
+            # Append the user message to the chat history
+            chat_history.append({"user": user_input})
+
+            # Perform similarity search (ensure vector_store_loaded is defined)
+            results = vector_store_loaded.similarity_search(user_input, k=5)
             page_content = "\n".join([i.page_content for i in results])
-            user_messages.append(user_input)
-            user_messages_str = "\n".join(user_messages)
+
+            # Prepare messages for OpenAI API
             messages = [
                 {"role": "system", "content": SYSTEM_PROMPT},
-                {
-                    "role": "user",
-                    "content": f"### **User Query:** \n{user_messages_str} \n### **Retrieved Context:** \n{page_content}",
-                },
+                {"role": "user", "content": f"### **Retrieved Context:** \n{page_content}"},
             ]
-            response = call_openai(client, messages)
-            await websocket.send_text(response)
+
+            # Convert chat_history to the correct format and extend messages
+            for entry in chat_history:
+                if "user" in entry:
+                    messages.append({"role": "user", "content": entry["user"]})
+                elif "assistant" in entry:
+                    messages.append({"role": "assistant", "content": entry["assistant"]})
+
+            response_text = ''
+            for chunk in call_openai(client, messages):
+                await websocket.send_text(chunk)
+                response_text+=chunk
+
+             # Append the assistant's response to the chat history
+            chat_history.append({"assistant": response_text})
+
     except WebSocketDisconnect:
         print("WebSocket disconnected")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        await websocket.send_text("An error occurred. Please try again.")
