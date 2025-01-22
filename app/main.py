@@ -16,7 +16,7 @@ from langchain_cohere import CohereEmbeddings
 from langchain_milvus import Milvus
 from utils import load_split_file, call_openai
 from dotenv import load_dotenv
-import os,asyncio
+import os
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -88,13 +88,7 @@ vector_store_loaded = Milvus(
     collection_name="langchain_example",
 )
 
-"""
-Step1: extract year
-Step2: Rewrite Query
-Step3: Vector store
-Step4: LLM call
-Step5: Rerank
-"""
+
 @app.websocket("/")
 async def websocket_chat(websocket: WebSocket):
     await websocket.accept()
