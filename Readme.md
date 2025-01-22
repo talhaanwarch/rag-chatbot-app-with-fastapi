@@ -44,12 +44,14 @@ To start the local server using Docker Compose, run:
 ```sh
 docker-compose up -d
 ```
-
+### Upload file
+Users can upload `PDF` and `DOCX` files to the `/upload` endpoint. Currently, only one file can be uploaded, and any subsequent uploads will overwrite the previously uploaded file. We're working to improve this feature to allow multiple file uploads.   
 ## Features/Updates
 
 - [x] Build a history-aware RAG chatbot with minimal dependencies on LangChain.
 - [x] Implement a client-server RESTful API.
 - [x] Implement WebSocket connections.
+## Changs made by me
 - [x] Switch from Chroma to Milvus/Zilliz free tier.
 - [x] Use GROQ Llama and Cohere embeddings, as both are free.
 - [x] Create a Docker Compose file to run the application in a containerized environment.
